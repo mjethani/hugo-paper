@@ -31,8 +31,34 @@
     {{- if eq (getenv "HUGO_ENV") "production" | or (eq .Site.Params.env "production") }}
     {{- template "_internal/google_analytics_async.html" . }}
     {{- end }}
+    <!-- Script -->
+    <script>
+      function setTheme() {
+    {{- if eq .Site.Params.colorScheme "dark" }}
+        document.body.classList.add('dark');
+    {{- else }}
+      {{- if ne .Site.Params.colorScheme "light" }}
+        if (typeof matchMedia !== 'undefined') {
+          if (matchMedia('(prefers-color-scheme: dark)').matches)
+            document.body.classList.add('dark');
+
+          matchMedia('(prefers-color-scheme: dark)')
+          .addListener(({matches}) => {
+            if (matches)
+              document.body.classList.add('dark');
+            else
+              document.body.classList.remove('dark');
+          });
+        }
+      {{- end }}
+    {{- end }}
+      }
+    </script>
   </head>
-  <body class="{{ if eq .Kind `page` }}single{{ else }}list{{ if .IsHome }} home{{ end }}{{ end }} dark">
+  <body class="{{ if eq .Kind `page` }}single{{ else }}list{{ if .IsHome }} home{{ end }}{{ end }}">
+    <script>
+      setTheme();
+    </script>
     <header class="header">
       <nav class="nav">
         {{- if .IsHome }}
